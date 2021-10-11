@@ -1,104 +1,196 @@
-const createItemWrapper = (data) => {
+const createSearchItemWrapper = data => {
     const wrapper = document.createElement("div")
     const header = document.createElement("h2")
     header.classList.add("card-title")
     header.classList.add("mb-3")
-    header.innerHTML = data.name
+    header.innerHTML = data.name ? data.name : data.title
     wrapper.appendChild(header)
     return wrapper
 }
 
-const createPeopleItem = (data) => {
-    const contentWrapper = document.createElement("div")
-    contentWrapper.classList.add("mb-3")
-    const genderHeader = document.createElement("h5")
-    genderHeader.classList.add("card-subtitle")
-    genderHeader.innerHTML = "Gender"
-
-    const gender = document.createElement("p")
-    gender.classList.add("card-text")
-    gender.innerHTML = data.gender
-
-    const heightHeader = document.createElement("h5")
-    heightHeader.classList.add("card-subtitle")
-    heightHeader.innerHTML = "Height"
-
-    const height = document.createElement("p")
-    height.classList.add("card-text")
-    height.innerHTML = `${data.height} cm`
-
-    contentWrapper.appendChild(genderHeader)
-    contentWrapper.appendChild(gender)
-    contentWrapper.appendChild(heightHeader)
-    contentWrapper.appendChild(height)
-
-    return contentWrapper
-}
-
-const createItemFromURL = (title, url) => {
+const createContentWrapper = (title) => {
     const wrapper = document.createElement("div")
-    wrapper.classList.add("mb-3")
+    wrapper.classList.add("mb-5")
 
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            const header = document.createElement("h5")
-            header.classList.add("card-subtitle")
-            header.innerHTML = title
-
-            const content = document.createElement("p")
-            content.classList.add("card-text")
-            content.innerHTML = data.name
-
-            wrapper.appendChild(header)
-            wrapper.appendChild(content)
-
-            content.addEventListener("click", () => {
-                // renderItem(data.url)
-                console.log(data.url)
-            })
-        })
     return wrapper
 }
 
-const createItemListFromURL = (title, array) => {
-    const wrapper = document.createElement("div")
-    wrapper.classList.add("mb-3")
-
+const createContentItem = (title, content) => {
+    const wrapper = createContentWrapper(title)
     const header = document.createElement("h5")
     header.classList.add("card-subtitle")
-    header.innerHTML = title
+    header.classList.add("mb-1")
+    header.innerText = title
+
+    const p = document.createElement("p")
+    // p.classList.add("card-text")
+    p.innerText = content
 
     wrapper.appendChild(header)
+    wrapper.appendChild(p)
 
-    array.forEach(item => {
-        fetch(item)
-            .then(response => response.json())
-            .then(data => {
-                const p = document.createElement("p")
-                p.classList.add("card-text")
-                p.innerHTML = data.name
-                wrapper.appendChild(p)
-                p.addEventListener("click", () => {
-                    // renderItem(item)
-                    console.log(item)
-                })
-            })
-    })
     return wrapper
 }
 
-const renderItem = url => {
-    clearResultList()
+const createItemFromURL = (title, url, name) => {
+    const wrapper = createContentWrapper()
+
+    if (url) {
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const header = document.createElement("h5")
+                header.classList.add("card-subtitle")
+                header.classList.add("mb-1")
+                header.innerHTML = title
+
+                const content = document.createElement("p")
+                // content.classList.add("card-text")
+                content.innerHTML = data.name
+
+                wrapper.appendChild(header)
+                wrapper.appendChild(content)
+
+                content.addEventListener("click", () => {
+                    renderItem(name, url)
+                })
+            })
+    }
+    return wrapper
+}
+
+const createItemListFromURL = (title, array, name) => {
+    const wrapper = createContentWrapper()
+
+    if (array.length !== 0) {
+        const header = document.createElement("h5")
+        header.classList.add("card-subtitle")
+        header.classList.add("mb-1")
+        header.innerHTML = title
+
+        wrapper.appendChild(header)
+
+        array.forEach(item => {
+            fetch(item)
+                .then(response => response.json())
+                .then(data => {
+                    const p = document.createElement("p")
+                    // p.classList.add("card-text")
+                    p.innerHTML = data.title ? data.title : data.name
+                    wrapper.appendChild(p)
+                    p.addEventListener("click", () => {
+                        renderItem(name, item)
+                    })
+                })
+        })
+    }
+    return wrapper
+}
+
+const createPeopleItem = data => {
+    const wrapper = document.createElement("div")
+
+    wrapper.appendChild(createContentItem("Gender", data.gender))
+    wrapper.appendChild(createContentItem("Height", data.height))
+    wrapper.appendChild(createItemFromURL("Homeworld", data.homeworld, name = "planets"))
+    wrapper.appendChild(createItemListFromURL("Starships", data.starships, name = "starships"))
+    wrapper.appendChild(createItemListFromURL("Films", data.films, name = "films"))
+
+    return wrapper
+}
+
+const createPlanetItem = data => {
+    const wrapper = document.createElement("div")
+
+    wrapper.appendChild(createContentItem("Climate", data.climate))
+    wrapper.appendChild(createContentItem("Terrain", data.terrain))
+    wrapper.appendChild(createContentItem("Gravity", data.gravity))
+    wrapper.appendChild(createContentItem("Population", data.population))
+    wrapper.appendChild(createItemListFromURL("Residents", data.residents, name = "people"))
+    wrapper.appendChild(createItemListFromURL("Films", data.films, name = "films"))
+
+    return wrapper
+}
+
+const createShipItem = data => {
+    const wrapper = document.createElement("div")
+
+    wrapper.appendChild(createContentItem("Model", data.model))
+    wrapper.appendChild(createContentItem("Manufacturer", data.manufacturer))
+    wrapper.appendChild(createContentItem("Crew", data.crew))
+    wrapper.appendChild(createContentItem("Passengers", data.passengers))
+    wrapper.appendChild(createItemListFromURL("Pilots", data.pilots, name = "people"))
+    wrapper.appendChild(createItemListFromURL("Films", data.films, name = "films"))
+
+    return wrapper
+}
+
+const createVehicleItem = data => {
+    const wrapper = document.createElement("div")
+
+    wrapper.appendChild(createContentItem("Model", data.model))
+    wrapper.appendChild(createContentItem("Manufacturer", data.manufacturer))
+    wrapper.appendChild(createContentItem("Length", data.length))
+    wrapper.appendChild(createContentItem("Crew", data.crew))
+    wrapper.appendChild(createContentItem("Vehicle Class", data.vehicle_class))
+    wrapper.appendChild(createContentItem("Passengers", data.passengers))
+    wrapper.appendChild(createItemListFromURL("Pilots", data.pilots, name = "people"))
+    wrapper.appendChild(createItemListFromURL("Films", data.films, name = "films"))
+
+    return wrapper
+}
+
+const createSpeciesItem = data => {
+    const wrapper = document.createElement("div")
+
+    wrapper.appendChild(createContentItem("Classification", data.classification))
+    wrapper.appendChild(createContentItem("Language", data.language))
+    wrapper.appendChild(createContentItem("Average Height", data.average_height))
+    wrapper.appendChild(createContentItem("Average Lifespan", data.average_lifespan))
+    wrapper.appendChild(createContentItem("Eye Colors", data.eye_colors))
+    wrapper.appendChild(createContentItem("Hair Colors", data.hair_colors))
+    wrapper.appendChild(createContentItem("Skin Colors", data.skin_colors))
+    wrapper.appendChild(createItemFromURL("Homeworld", data.people, name = "planets"))
+    wrapper.appendChild(createItemListFromURL("People", data.people, name = "people"))
+    wrapper.appendChild(createItemListFromURL("Films", data.films, name = "films"))
+
+    return wrapper
+}
+
+const createFilmItem = data => {
+    const wrapper = document.createElement("div")
+
+    wrapper.appendChild(createContentItem("Director", data.director))
+    wrapper.appendChild(createContentItem("Opening Crawl", data.opening_crawl))
+    wrapper.appendChild(createContentItem("Producer", data.producer))
+    wrapper.appendChild(createContentItem("Release Date", data.release_date))
+    wrapper.appendChild(createItemListFromURL("Characters", data.characters, name = "people"))
+    wrapper.appendChild(createItemListFromURL("Planets", data.planets, name = "planets"))
+    wrapper.appendChild(createItemListFromURL("Species", data.species, name = "species"))
+    wrapper.appendChild(createItemListFromURL("Starships", data.starships, name = "starships"))
+    wrapper.appendChild(createItemListFromURL("Vehicles", data.vehicles, name = "vehicles"))
+
+    return wrapper
+}
+
+const getResourceItem = (name, data) => {
+    if (name === "people") return createPeopleItem(name, data)
+    else if (name === "planets") return createPlanetItem(name, data)
+    else if (name === "starships") return createShipItem(name, data)
+    else if (name === "vehicles") return createVehicleItem(name, data)
+    else if (name === "species") return createSpeciesItem(name, data)
+    else if (name === "films") return createFilmItem(name, data)
+}
+
+const renderItem = (name, url) => {
+    clearResultList() //FLYTTA!!
     fetch(url)
         .then(response => response.json())
         .then(data => {
             if (data) {
-                const wrapper = createItemWrapper(data)
+                const wrapper = createSearchItemWrapper(data)
 
-                wrapper.appendChild(createPeopleItem(data))
-                wrapper.appendChild(createItemFromURL("Homeworld", data.homeworld))
-                wrapper.appendChild(createItemListFromURL("Starships", data.starships))
+                wrapper.appendChild(getResourceItem(name, data))
 
                 resultList.appendChild(wrapper)
             }
@@ -106,34 +198,32 @@ const renderItem = url => {
 }
 
 const clearResultList = () => {
-    // resultListRoot.classList.add("visually-hidden")
     while (resultList.firstChild) {
         resultList.removeChild(resultList.lastChild)
     }
 }
 
 const renderSearchResult = (name, results) => {
-    // resultListRoot.classList.remove("visually-hidden")
+    // console.log(resources)
     const wrapper = document.createElement("div")
     const header = document.createElement("h3")
     header.innerHTML = name.toUpperCase()
     wrapper.appendChild(header)
     results.forEach(item => {
 
-        const name = document.createElement("p")
-        name.innerHTML = item.name
+        const p = document.createElement("p")
+        p.innerHTML = item.name ? item.name : item.title
 
-        wrapper.appendChild(name)
+        wrapper.appendChild(p)
 
-        name.addEventListener("click", () => {
-            clearResultList()
-            renderItem(item.url)
+        p.addEventListener("click", () => {
+            renderItem(name, item.url)
         })
 
         resultList.appendChild(wrapper)
     })
 }
-
+// const resources = []
 const search = searchterm => {
     clearResultList()
     fetch(url)
@@ -141,12 +231,11 @@ const search = searchterm => {
         .then(data => {
             Object.entries(data).forEach(resource => {
                 const name = resource[0]
+                // resources.push(name)
                 fetch(`${url}${name}/?search=${searchterm}`)
                     .then(res => res.json())
                     .then(data => {
-                        const results = data.results
-                        console.log(results)
-                        renderSearchResult(name, results)
+                        renderSearchResult(name, data.results)
                     })
             })
         })
