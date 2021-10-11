@@ -1,2 +1,2 @@
 # SWAPIFetcher
-A SEARCH ENGINE APPLICATION THAT FETCHES DATA FROM THE STAR WARS API(SWAPI)
+A search engine application that fetches data from the Star Wars API(SWAPI)
