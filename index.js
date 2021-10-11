@@ -1,61 +1,3 @@
-const createItemFromURL = (title, url, resourceName) => {
-    const wrapper = createContentWrapper()
-
-    if (url) {
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                const header = document.createElement("h5")
-                header.classList.add("card-subtitle")
-                header.classList.add("mb-1")
-                header.innerHTML = title
-
-                const p = document.createElement("p")
-                p.classList.add("user-select-none")
-                p.classList.add("p-link")
-                p.innerHTML = data.name
-
-                wrapper.appendChild(header)
-                wrapper.appendChild(p)
-
-                p.addEventListener("click", () => {
-                    clearResultList()
-                    renderItem(resourceName, url)
-                })
-            })
-    }
-    return wrapper
-}
-
-const createItemListFromURL = (title, array, resourceName) => {
-    const wrapper = createContentWrapper()
-    if (array.length !== 0) {
-        const header = document.createElement("h5")
-        header.classList.add("card-subtitle")
-        header.classList.add("mb-1")
-        header.innerHTML = title
-
-        wrapper.appendChild(header)
-
-        array.forEach(item => {
-            fetch(item)
-                .then(response => response.json())
-                .then(data => {
-                    const p = document.createElement("p")
-                    p.classList.add("user-select-none")
-                    p.classList.add("p-link")
-                    p.innerHTML = data.title ? data.title : data.name
-                    wrapper.appendChild(p)
-                    p.addEventListener("click", () => {
-                        clearResultList()
-                        renderItem(resourceName, item)
-                    })
-                })
-        })
-    }
-    return wrapper
-}
-
 const getResourceItem = (resourceName, data) => {
     if (resourceName === "people") return createPeopleItem(data)
     else if (resourceName === "planets") return createPlanetItem(data)
@@ -77,12 +19,6 @@ const renderItem = (resourceName, url) => {
                 resultList.appendChild(wrapper)
             }
         })
-}
-
-const clearResultList = () => {
-    while (resultList.firstChild) {
-        resultList.removeChild(resultList.lastChild)
-    }
 }
 
 const renderSearchResult = (resourceName, results) => {
