@@ -1,0 +1,17 @@
+@font-face {
+    font-family: "Starjout";
+    src: url(./fonts/stjelogo/Stjldbl1.ttf) format("truetype");
+}
+
+.h1 {
+    font-family: "Starjout";
+    font-size: 48px;
+}
+
+p {
+    margin-bottom: 0.5rem;
+}
+
+.p-link:hover {
+    opacity: 0.7;
+}
