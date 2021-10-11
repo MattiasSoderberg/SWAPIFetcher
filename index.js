@@ -23,7 +23,6 @@ const createContentItem = (title, content) => {
     header.innerText = title
 
     const p = document.createElement("p")
-    // p.classList.add("card-text")
     p.innerText = content
 
     wrapper.appendChild(header)
@@ -140,6 +139,7 @@ const createItemFromURL = (title, url, resourceName) => {
                 wrapper.appendChild(p)
 
                 p.addEventListener("click", () => {
+                    clearResultList()
                     renderItem(resourceName, url)
                 })
             })
@@ -167,6 +167,7 @@ const createItemListFromURL = (title, array, resourceName) => {
                     p.innerHTML = data.title ? data.title : data.name
                     wrapper.appendChild(p)
                     p.addEventListener("click", () => {
+                        clearResultList()
                         renderItem(resourceName, item)
                     })
                 })
@@ -185,7 +186,6 @@ const getResourceItem = (resourceName, data) => {
 }
 
 const renderItem = (resourceName, url) => {
-    clearResultList() //FLYTTA!!
     fetch(url)
         .then(response => response.json())
         .then(data => {
@@ -206,7 +206,6 @@ const clearResultList = () => {
 }
 
 const renderSearchResult = (resourceName, results) => {
-    // console.log(resources)
     const wrapper = document.createElement("div")
     const header = document.createElement("h3")
     header.innerHTML = resourceName.toUpperCase()
@@ -221,13 +220,14 @@ const renderSearchResult = (resourceName, results) => {
         wrapper.appendChild(p)
 
         p.addEventListener("click", () => {
+            clearResultList()
             renderItem(resourceName, item.url)
         })
 
         resultList.appendChild(wrapper)
     })
 }
-// const resources = []
+
 const search = searchterm => {
     clearResultList()
     fetch(url)
@@ -235,7 +235,6 @@ const search = searchterm => {
         .then(data => {
             Object.entries(data).forEach(resource => {
                 const resourceName = resource[0]
-                // resources.push(name)
                 fetch(`${url}${resourceName}/?search=${searchterm}`)
                     .then(res => res.json())
                     .then(data => {
@@ -252,6 +251,8 @@ const url = "https://swapi.dev/api/"
 
 btn.addEventListener("click", () => {
     const searchterm = input.value
+
+    clearResultList()
 
     if (searchterm) {
         search(searchterm)
