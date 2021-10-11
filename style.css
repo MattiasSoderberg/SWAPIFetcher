@@ -15,3 +15,7 @@ p {
 .p-link:hover {
     opacity: 0.7;
 }
+
+#btn:hover {
+    background-color: rgba(0, 0, 0, 0.75);
+}
